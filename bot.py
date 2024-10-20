@@ -110,7 +110,7 @@ class BFDcoin:
         
     def collect_spesialbox(self, user_id: int):
         url = 'https://api.bfdcoin.org/api?act=collectSpecialBoxCoin'
-        data = {'boxType': 2, 'coinCount': 2100}
+        data = {'boxType': 2, 'coinCount': 210}
         self.headers.update({
             'Content-Type': 'application/json',
             'Token': str(user_id)
