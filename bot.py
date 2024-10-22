@@ -32,7 +32,7 @@ class BFDcoin:
 
     def log(self, message):
         print(
-            f"{Fore.CYAN + Style.BRIGHT}[ {datetime.now().astimezone(wib).strftime('%x %X %Z')} ]{Style.RESET_ALL}"
+            f"{Fore.CYAN + Style.BRIGHT}[ {datetime.now().astimezone(wib).strftime('%X')} ]{Style.RESET_ALL}"
             f"{Fore.WHITE + Style.BRIGHT} | {Style.RESET_ALL}{message}",
             flush=True
         )
@@ -232,7 +232,7 @@ class BFDcoin:
                                 f"{Fore.RED + Style.BRIGHT} Isn't Collected {Style.RESET_ALL}"
                                 f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
                             )
-                        time.sleep(0.1)
+                        #time.sleep(1)
             else:
                 self.log(
                     f"{Fore.MAGENTA + Style.BRIGHT}[ Special Box{Style.RESET_ALL}"
