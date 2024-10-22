@@ -232,7 +232,7 @@ class BFDcoin:
                                 f"{Fore.RED + Style.BRIGHT} Isn't Collected {Style.RESET_ALL}"
                                 f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
                             )
-                        # time.sleep(0.01)
+                        time.sleep(1)
             else:
                 self.log(
                     f"{Fore.MAGENTA + Style.BRIGHT}[ Special Box{Style.RESET_ALL}"
