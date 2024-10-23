@@ -212,7 +212,7 @@ class BFDcoin:
                             f"{Fore.RED + Style.BRIGHT} Isn't Collected {Style.RESET_ALL}"
                             f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
                         )
-                    time.sleep(0.5)
+                    #time.sleep(0.5)
                 else:
                     while True:
                         success = self.collect_spesialbox(user_id)
