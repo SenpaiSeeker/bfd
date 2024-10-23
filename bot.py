@@ -278,6 +278,7 @@ class BFDcoin:
             self.log(f"{Fore.RED + Style.BRIGHT}[ EXIT ] BFD Coin - BOT{Style.RESET_ALL}")
         except Exception as e:
             self.log(f"{Fore.RED + Style.BRIGHT}An error occurred: {e}{Style.RESET_ALL}")
+        self.main()
 
 if __name__ == "__main__":
     bfd = BFDcoin()
