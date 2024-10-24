@@ -127,7 +127,7 @@ class BFDcoin:
 
     def question(self):
         while True:
-            collect = input("Inject Collect Spesial Box? [y/n] -> ").strip().lower()
+            collect = "y"
             if collect in ["y", "n"]:
                 collect = collect == "y"
                 break
@@ -139,7 +139,7 @@ class BFDcoin:
                 try:
                     print("1. Multi Account Processing")
                     print("2. Single Account Processing")
-                    choose = int(input("Choose [1/2] -> ").strip())
+                    choose = 2
 
                     if choose in [1, 2]:
                         print(f"{Fore.GREEN + Style.BRIGHT}You chose {'Multi' if choose == 1 else 'Single'} Account Processing.{Style.RESET_ALL}")
