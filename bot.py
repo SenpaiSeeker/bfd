@@ -1,10 +1,9 @@
 import requests
 import json
-import random
 import os
 import urllib.parse
-from colorama import *
-from datetime import datetime, timedelta
+from colorama import Fore, Style
+from datetime import datetime
 import time
 import pytz
 
@@ -40,11 +39,11 @@ class BFDcoin:
     def welcome(self):
         print(
             f"""
-        {Fore.GREEN + Style.BRIGHT}Auto Claim {Fore.BLUE + Style.BRIGHT}BFD Coin - BOT
-            """
+        {Fore.GREEN + Style.BRIGHT}Auto Claim {Fore.BLUE + Style.BRIGHT}BFD Coin - BOT{Style.RESET_ALL}
+        """
             f"""
-        {Fore.GREEN + Style.BRIGHT}Rey? {Fore.YELLOW + Style.BRIGHT}<INI WATERMARK>
-            """
+        {Fore.GREEN + Style.BRIGHT}Rey? {Fore.YELLOW + Style.BRIGHT}<INI WATERMARK>{Style.RESET_ALL}
+        """
         )
 
     def format_seconds(self, seconds):
@@ -74,10 +73,7 @@ class BFDcoin:
 
         response = self.session.post(url, headers=self.headers)
         result = response.json()
-        if result['code'] == 0:
-            return result['data']
-        else:
-            return None
+        return result['data'] if result['code'] == 0 else None
         
     def common_tasklist(self, user_id: int):
         url = 'https://api.bfdcoin.org/api?act=getCommonTaskList'
@@ -88,25 +84,18 @@ class BFDcoin:
 
         response = self.session.post(url, headers=self.headers)
         result = response.json()
-        if result['code'] == 0:
-            return result['data']
-        else:
-            return None
+        return result['data'] if result['code'] == 0 else None
         
     def finish_task(self, user_id: int, task_id: int):
         url = 'https://api.bfdcoin.org/api?act=finishTask'
-        data = str(task_id)
         self.headers.update({
             'Content-Type': 'application/json',
             'Token': str(user_id)
         })
 
-        response = self.session.post(url, headers=self.headers, data=data)
+        response = self.session.post(url, headers=self.headers, data=str(task_id))
         result = response.json()
-        if result['code'] == 0:
-            return result['data']
-        else:
-            return None
+        return result['data'] if result['code'] == 0 else None
         
     def collect_spesialbox(self, user_id: int):
         url = 'https://api.bfdcoin.org/api?act=collectSpecialBoxCoin'
@@ -118,41 +107,9 @@ class BFDcoin:
 
         response = self.session.post(url, headers=self.headers, json=data)
         result = response.json()
-        if result['code'] == 0:
-            return result['data']
-        else:
-            return None
-        
-    from colorama import Fore, Style
-
-    def question(self):
-        while True:
-            collect = "y"
-            if collect in ["y", "n"]:
-                collect = collect == "y"
-                break
-            else:
-                print(f"{Fore.RED + Style.BRIGHT}Invalid Input.{Fore.WHITE + Style.BRIGHT} Choose 'y' to Yes or 'n' to No.{Style.RESET_ALL}")
-
-        if collect:
-            while True:
-                try:
-                    print("1. Multi Account Processing")
-                    print("2. Single Account Processing")
-                    choose = 2
-
-                    if choose in [1, 2]:
-                        print(f"{Fore.GREEN + Style.BRIGHT}You chose {'Multi' if choose == 1 else 'Single'} Account Processing.{Style.RESET_ALL}")
-                        return collect, choose
-                    else:
-                        print(f"{Fore.RED + Style.BRIGHT}Please enter either 1 or 2.{Style.RESET_ALL}")
-                except ValueError:
-                    print(f"{Fore.RED + Style.BRIGHT}Invalid input. Enter a number (1 or 2).{Style.RESET_ALL}")
-        
-        return collect, None
+        return result['data'] if result['code'] == 0 else None
     
-    def process_query(self, query: str, collect: bool, choose: int):
-
+    def process_query(self, query: str, collect: bool = True, choose: int = 2):
         user_id, first_name = self.load_data(query)
 
         account = self.account_info(user_id)
@@ -169,30 +126,25 @@ class BFDcoin:
 
             tasklists = self.common_tasklist(user_id)
             if tasklists:
-
-                tasks = tasklists['data']
-                if tasks:
-                    for task in tasks:
-                        task_id = task['taskId']
-
-                        if task and task['taskStatus'] == 0:
-                            finish = self.finish_task(user_id, task_id)
-                            if finish:
-                                self.log(
-                                    f"{Fore.MAGENTA + Style.BRIGHT}[ Task{Style.RESET_ALL}"
-                                    f"{Fore.WHITE + Style.BRIGHT} {task['taskName']} {Style.RESET_ALL}"
-                                    f"{Fore.GREEN + Style.BRIGHT}Is Completed{Style.RESET_ALL}"
-                                    f"{Fore.MAGENTA + Style.BRIGHT}] [ Reward{Style.RESET_ALL}"
-                                    f"{Fore.WHITE + Style.BRIGHT} {finish['bonusAmount']} $BFD {Style.RESET_ALL}"
-                                    f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
-                                )
-                            else:
-                                self.log(
-                                    f"{Fore.MAGENTA + Style.BRIGHT}[ Task{Style.RESET_ALL}"
-                                    f"{Fore.WHITE + Style.BRIGHT} {task['taskName']} {Style.RESET_ALL}"
-                                    f"{Fore.RED + Style.BRIGHT}Isn't Completed{Style.RESET_ALL}"
-                                    f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
-                                )
+                for task in tasklists['data']:
+                    if task and task['taskStatus'] == 0:
+                        finish = self.finish_task(user_id, task['taskId'])
+                        if finish:
+                            self.log(
+                                f"{Fore.MAGENTA + Style.BRIGHT}[ Task{Style.RESET_ALL}"
+                                f"{Fore.WHITE + Style.BRIGHT} {task['taskName']} {Style.RESET_ALL}"
+                                f"{Fore.GREEN + Style.BRIGHT}Is Completed{Style.RESET_ALL}"
+                                f"{Fore.MAGENTA + Style.BRIGHT}] [ Reward{Style.RESET_ALL}"
+                                f"{Fore.WHITE + Style.BRIGHT} {finish['bonusAmount']} $BFD {Style.RESET_ALL}"
+                                f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
+                            )
+                        else:
+                            self.log(
+                                f"{Fore.MAGENTA + Style.BRIGHT}[ Task{Style.RESET_ALL}"
+                                f"{Fore.WHITE + Style.BRIGHT} {task['taskName']} {Style.RESET_ALL}"
+                                f"{Fore.RED + Style.BRIGHT}Isn't Completed{Style.RESET_ALL}"
+                                f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
+                            )
             if collect:
                 if choose == 1:
                     success = self.collect_spesialbox(user_id)
@@ -212,7 +164,6 @@ class BFDcoin:
                             f"{Fore.RED + Style.BRIGHT} Isn't Collected {Style.RESET_ALL}"
                             f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
                         )
-                    #time.sleep(0.5)
                 else:
                     while True:
                         success = self.collect_spesialbox(user_id)
@@ -232,47 +183,37 @@ class BFDcoin:
                                 f"{Fore.RED + Style.BRIGHT} Isn't Collected {Style.RESET_ALL}"
                                 f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
                             )
-                        #time.sleep(1)
-            else:
-                self.log(
-                    f"{Fore.MAGENTA + Style.BRIGHT}[ Special Box{Style.RESET_ALL}"
-                    f"{Fore.YELLOW + Style.BRIGHT} Skipped {Style.RESET_ALL}"
-                    f"{Fore.MAGENTA + Style.BRIGHT}]{Style.RESET_ALL}"
-                )
 
     def main(self):
         try:
             with open('query.txt', 'r') as file:
                 queries = [line.strip() for line in file if line.strip()]
 
-            collect, choose = self.question()
+            self.clear_terminal()
+            self.welcome()
+            self.log(
+                f"{Fore.GREEN + Style.BRIGHT}Account's Total: {Style.RESET_ALL}"
+                f"{Fore.WHITE + Style.BRIGHT}{len(queries)}{Style.RESET_ALL}"
+            )
+            self.log(f"{Fore.CYAN + Style.BRIGHT}-----------------------------------------------------------------------{Style.RESET_ALL}")
 
-            while True:
-                self.clear_terminal()
-                self.welcome()
-                self.log(
-                    f"{Fore.GREEN + Style.BRIGHT}Account's Total: {Style.RESET_ALL}"
-                    f"{Fore.WHITE + Style.BRIGHT}{len(queries)}{Style.RESET_ALL}"
+            for query in queries:
+                query = query.strip()
+                if query:
+                    self.process_query(query)
+                    self.log(f"{Fore.CYAN + Style.BRIGHT}-----------------------------------------------------------------------{Style.RESET_ALL}")
+
+            seconds = 1800
+            while seconds > 0:
+                formatted_time = self.format_seconds(seconds)
+                print(
+                    f"{Fore.CYAN+Style.BRIGHT}[ Wait for{Style.RESET_ALL}"
+                    f"{Fore.WHITE+Style.BRIGHT} {formatted_time} {Style.RESET_ALL}"
+                    f"{Fore.CYAN+Style.BRIGHT}... ]{Style.RESET_ALL}",
+                    end="\r"
                 )
-                self.log(f"{Fore.CYAN + Style.BRIGHT}-----------------------------------------------------------------------{Style.RESET_ALL}")
-
-                for query in queries:
-                    query = query.strip()
-                    if query:
-                        self.process_query(query, collect, choose)
-                        self.log(f"{Fore.CYAN + Style.BRIGHT}-----------------------------------------------------------------------{Style.RESET_ALL}")
-
-                seconds = 1800
-                while seconds > 0:
-                    formatted_time = self.format_seconds(seconds)
-                    print(
-                        f"{Fore.CYAN+Style.BRIGHT}[ Wait for{Style.RESET_ALL}"
-                        f"{Fore.WHITE+Style.BRIGHT} {formatted_time} {Style.RESET_ALL}"
-                        f"{Fore.CYAN+Style.BRIGHT}... ]{Style.RESET_ALL}",
-                        end="\r"
-                    )
-                    time.sleep(1)
-                    seconds -= 1
+                time.sleep(1)
+                seconds -= 1
 
         except KeyboardInterrupt:
             self.log(f"{Fore.RED + Style.BRIGHT}[ EXIT ] BFD Coin - BOT{Style.RESET_ALL}")
